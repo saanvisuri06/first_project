@@ -8,8 +8,12 @@ public class PlayerControl : MonoBehaviour
     private Vector2 movementVector;
     private Rigidbody2D rb;
     [SerializeField] int speed = 0;
-    private bool isGrounded = true; 
+    [SerializeField] int jumpForce = 500;
+    [SerializeField] int dashForce = 1000; 
+    [SerializeField] float dashDuration = 0.1f; 
 
+    private bool isGrounded = true;
+    private bool isDashing = false;
 
     void Start()
     {
@@ -28,14 +32,16 @@ public class PlayerControl : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("ground"))
         {
-            isGrounded = false; 
+            isGrounded = false;
         }
     }
 
-
     void Update()
     {
-        rb.velocity = new Vector2(speed * movementVector.x, rb.velocity.y);
+        if (!isDashing)
+        {
+            rb.velocity = new Vector2(speed * movementVector.x, rb.velocity.y);
+        }
     }
 
     void OnMove(InputValue value)
@@ -48,8 +54,30 @@ public class PlayerControl : MonoBehaviour
     {   
         if (isGrounded)
         {
-            rb.AddForce(new Vector2(0, 500));
+            rb.AddForce(new Vector2(0, jumpForce));
             isGrounded = false;
         }
     }
+
+    void OnDash(InputValue value)
+    {
+        if (!isDashing)
+        {
+            isDashing = true;
+
+            rb.velocity = new Vector2(movementVector.x * dashForce, rb.velocity.y);
+
+            Invoke("EndDash", dashDuration);
+        }
+    }
+
+    void EndDash()
+    {
+        isDashing = false;
+
+        rb.velocity = new Vector2(movementVector.x * speed, rb.velocity.y);
+    }
 }
+
+
+
