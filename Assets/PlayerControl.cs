@@ -44,7 +44,7 @@ public class PlayerControl : MonoBehaviour
     {
         if (!isDashing)
         {
-            rb.velocity = new Vector2(speed * movementVector.x, rb.velocity.y);
+            rb.velocity = new Vector2(speed * movementVector.x, speed * movementVector.y);
         }
     }
 
